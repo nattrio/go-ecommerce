@@ -1,7 +1,7 @@
 BEGIN;
 
 -- Set timezone
-SET TIME ZONE 'Asia/Bangkok'
+SET TIME ZONE 'Asia/Bangkok';
 
 -- Install uuid extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -96,7 +96,7 @@ CREATE TABLE "orders" (
 );
 
 CREATE TABLE "products_orders" (
-  "id" VARCHAR PRIMARY KEY,
+  "id" uuid NOT NULL UNIQUE PRIMARY KEY DEFAULT uuid_generate_v4(),
   "order_id" VARCHAR NOT NULL,
   "qty" INT NOT NULL DEFAULT 1,
   "product" jsonb
