@@ -39,6 +39,7 @@ func NewServer(cfg config.IConfig, db *sqlx.DB) IServer {
 func (s *server) Start() {
 	//Middlewares
 	midlewares := InitMiddlewares(s)
+	s.app.Use(midlewares.Logger())
 	s.app.Use(midlewares.Cors())
 
 	// Modules
