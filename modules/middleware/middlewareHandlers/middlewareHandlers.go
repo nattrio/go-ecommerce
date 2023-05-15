@@ -4,11 +4,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/nattrio/go-ecommerce/config"
+	"github.com/nattrio/go-ecommerce/modules/entities"
 	"github.com/nattrio/go-ecommerce/modules/middleware/middlewareUsecases"
+)
+
+type middlewareHandlersErrCode string
+
+const (
+	routerCheckErr middlewareHandlersErrCode = "Route-001"
 )
 
 type IMiddlewareHandler interface {
 	Cors() fiber.Handler
+	RouterCheck() fiber.Handler
 }
 
 type middlewareHandler struct {
@@ -33,4 +41,14 @@ func (h *middlewareHandler) Cors() fiber.Handler {
 		ExposeHeaders:    "",
 		MaxAge:           0,
 	})
+}
+
+func (h *middlewareHandler) RouterCheck() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		return entities.NewResponse(c).Error(
+			fiber.ErrNotFound.Code,
+			string(routerCheckErr),
+			"Route not found",
+		).Res()
+	}
 }

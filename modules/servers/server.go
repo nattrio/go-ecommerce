@@ -46,6 +46,7 @@ func (s *server) Start() {
 	modules := InitModule(v1, s, midlewares)
 
 	modules.MonitorModule()
+	s.app.Use(midlewares.RouterCheck())
 
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)
