@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/nattrio/go-ecommerce/config"
+	"github.com/nattrio/go-ecommerce/modules/servers"
 	"github.com/nattrio/go-ecommerce/pkg/databases"
 )
 
@@ -22,5 +22,5 @@ func main() {
 	db := databases.DbConnect(cfg.Db())
 	defer db.Close()
 
-	fmt.Println(db)
+	servers.NewServer(cfg, db).Start()
 }
