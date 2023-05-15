@@ -15,14 +15,14 @@ type IServer interface {
 	Start()
 }
 
-type Server struct {
+type server struct {
 	app *fiber.App
 	cfg config.IConfig
 	db  *sqlx.DB
 }
 
 func NewServer(cfg config.IConfig, db *sqlx.DB) IServer {
-	return &Server{
+	return &server{
 		cfg: cfg,
 		db:  db,
 		app: fiber.New(fiber.Config{
@@ -36,7 +36,7 @@ func NewServer(cfg config.IConfig, db *sqlx.DB) IServer {
 	}
 }
 
-func (s *Server) Start() {
+func (s *server) Start() {
 	//Middlewares
 
 	// Modules
