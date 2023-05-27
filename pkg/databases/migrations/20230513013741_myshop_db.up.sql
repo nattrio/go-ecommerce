@@ -44,8 +44,8 @@ CREATE TABLE "users" (
 CREATE TABLE "oauth" (
   "id" uuid NOT NULL UNIQUE PRIMARY KEY DEFAULT uuid_generate_v4(),
   "user_id" VARCHAR NOT NULL,
-  "acess_token" VARCHAR NOT NULL,
-  "refresh_token" TIMESTAMP NOT NULL,
+  "access_token" VARCHAR NOT NULL,
+  "refresh_token" VARCHAR NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
   "updates_at" TIMESTAMP NOT NULL DEFAULT NOW()
 );
