@@ -14,7 +14,7 @@ CREATE SEQUENCE users_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE products_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE orders_id_seq START WITH 1 INCREMENT BY 1;
 
--- Auto update created_at and updates_at
+-- Auto update created_at and updated_at
 CREATE OR REPLACE FUNCTION set_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -38,7 +38,7 @@ CREATE TABLE "users" (
   "email" VARCHAR UNIQUE NOT NULL,
   "role_id" INT NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
-  "updates_at" TIMESTAMP NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE "oauth" (
@@ -47,7 +47,7 @@ CREATE TABLE "oauth" (
   "access_token" VARCHAR NOT NULL,
   "refresh_token" VARCHAR NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
-  "updates_at" TIMESTAMP NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE "roles" (
@@ -61,7 +61,7 @@ CREATE TABLE "products" (
   "description" VARCHAR NOT NULL DEFAULT '',
   "price" FLOAT NOT NULL DEFAULT 0,
   "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
-  "updates_at" TIMESTAMP NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE "products_categories" (
@@ -81,7 +81,7 @@ CREATE TABLE "images" (
   "url" VARCHAR NOT NULL,
   "product_id" VARCHAR NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
-  "updates_at" TIMESTAMP NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE "orders" (
@@ -92,7 +92,7 @@ CREATE TABLE "orders" (
   "transfer_slip" jsonb,
   "status" order_status NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
-  "updates_at" TIMESTAMP NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE "products_orders" (

@@ -5,7 +5,7 @@ CREATE TABLE "users" (
   "email" varchar UNIQUE,
   "role_id" int,
   "created_at" timestamp,
-  "updates_at" timestamp
+  "updated_at" timestamp
 );
 
 CREATE TABLE "oauth" (
@@ -14,7 +14,7 @@ CREATE TABLE "oauth" (
   "access_token" varchar,
   "refresh_token" timestamp,
   "created_at" timestamp,
-  "updates_at" timestamp
+  "updated_at" timestamp
 );
 
 CREATE TABLE "roles" (
@@ -28,7 +28,7 @@ CREATE TABLE "products" (
   "description" varchar,
   "price" float,
   "created_at" timestamp,
-  "updates_at" timestamp
+  "updated_at" timestamp
 );
 
 CREATE TABLE "products_categories" (
@@ -48,7 +48,7 @@ CREATE TABLE "images" (
   "url" varchar,
   "product_id" varchar,
   "created_at" timestamp,
-  "updates_at" timestamp
+  "updated_at" timestamp
 );
 
 CREATE TABLE "orders" (
@@ -59,7 +59,7 @@ CREATE TABLE "orders" (
   "transfer_slip" jsonb,
   "status" varchar,
   "created_at" timestamp,
-  "updates_at" timestamp
+  "updated_at" timestamp
 );
 
 CREATE TABLE "products_orders" (
