@@ -73,6 +73,8 @@ func (m *moduleFactory) AppInfoModule() {
 
 	router := m.r.Group("/appinfo")
 
+	router.Post("/categories", m.mid.JwtAuth(), m.mid.Authorize(2), handler.AddCategory)
+
 	router.Get("/categories", m.mid.ApiKeyAuth(), handler.FindCategory)
 	router.Get("/apikey", m.mid.JwtAuth(), m.mid.Authorize(2), handler.GenerateApiKey)
 }
