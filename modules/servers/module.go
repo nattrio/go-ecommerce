@@ -17,6 +17,7 @@ import (
 type IModuleFactory interface {
 	MonitorModule()
 	UsersModule()
+	AppInfoModule()
 }
 
 type moduleFactory struct {
@@ -54,11 +55,11 @@ func (m *moduleFactory) UsersModule() {
 	// /v1/users/
 	router := m.r.Group("/users")
 
-	router.Post("/signup", handler.SignUpCustomer)
-	router.Post("/signin", handler.SignIn)
-	router.Post("/refresh", handler.RefreshPassport)
-	router.Post("/signout", handler.SignOut)
-	router.Post("/signup-admin", handler.SignUpAdmin)
+	router.Post("/signup", m.mid.ApiKeyAuth(), handler.SignUpCustomer)
+	router.Post("/signin", m.mid.ApiKeyAuth(), handler.SignIn)
+	router.Post("/refresh", m.mid.ApiKeyAuth(), handler.RefreshPassport)
+	router.Post("/signout", m.mid.ApiKeyAuth(), handler.SignOut)
+	router.Post("/signup-admin", m.mid.JwtAuth(), m.mid.Authorize(2), handler.SignUpAdmin)
 
 	router.Get("/:user_id", m.mid.JwtAuth(), m.mid.ParamsCheck(), handler.GetUserProfile)
 	router.Get("/admin/secret", m.mid.JwtAuth(), m.mid.Authorize(2), handler.GenerateAdminToken)
@@ -72,6 +73,5 @@ func (m *moduleFactory) AppInfoModule() {
 
 	router := m.r.Group("/appinfo")
 
-	_ = router
-	_ = handler
+	router.Get("/apikey", m.mid.JwtAuth(), m.mid.Authorize(2), handler.GenerateApiKey)
 }
