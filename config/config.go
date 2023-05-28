@@ -105,7 +105,7 @@ func LoadConfig(path string) IConfig {
 type IConfig interface {
 	App() IAppconfig
 	Db() IDbconfig
-	Jwt() IJwtconfig
+	Jwt() IJwtConfig
 }
 
 type config struct {
@@ -186,7 +186,7 @@ func (c *config) Db() IDbconfig {
 	return c.db
 }
 
-type IJwtconfig interface {
+type IJwtConfig interface {
 	SecretKey() []byte
 	AdminKey() []byte
 	ApiKey() []byte
@@ -204,7 +204,7 @@ type jwt struct {
 	refreshExpiresAt int // seconds
 }
 
-func (c *config) Jwt() IJwtconfig {
+func (c *config) Jwt() IJwtConfig {
 	return c.jwt
 }
 func (j *jwt) SecretKey() []byte          { return []byte(j.secretKey) }
