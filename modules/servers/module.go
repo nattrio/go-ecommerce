@@ -5,6 +5,8 @@ import (
 	"github.com/nattrio/go-ecommerce/modules/appinfo/appinfoHandlers"
 	"github.com/nattrio/go-ecommerce/modules/appinfo/appinfoRepositories"
 	"github.com/nattrio/go-ecommerce/modules/appinfo/appinfoUsecases"
+	"github.com/nattrio/go-ecommerce/modules/files/filesHandlers"
+	"github.com/nattrio/go-ecommerce/modules/files/filesUsecases"
 	"github.com/nattrio/go-ecommerce/modules/middleware/middlewareHandlers"
 	"github.com/nattrio/go-ecommerce/modules/middleware/middlewareRepositories"
 	"github.com/nattrio/go-ecommerce/modules/middleware/middlewareUsecases"
@@ -18,6 +20,7 @@ type IModuleFactory interface {
 	MonitorModule()
 	UsersModule()
 	AppInfoModule()
+	FileModule()
 }
 
 type moduleFactory struct {
@@ -79,4 +82,14 @@ func (m *moduleFactory) AppInfoModule() {
 	router.Get("/apikey", m.mid.JwtAuth(), m.mid.Authorize(2), handler.GenerateApiKey)
 
 	router.Delete("/:category_id/categories", m.mid.JwtAuth(), m.mid.Authorize(2), handler.RemoveCategory)
+}
+
+func (m *moduleFactory) FileModule() {
+	usecase := filesUsecases.FilesUsecase(m.s.cfg)
+	handler := filesHandlers.FilesHandler(m.s.cfg, usecase)
+
+	router := m.r.Group("/files")
+
+	router.Post("/upload", m.mid.JwtAuth(), m.mid.Authorize(2), handler.UploadFiles)
+	router.Delete("/delete", m.mid.JwtAuth(), m.mid.Authorize(2), handler.DeleteFile)
 }

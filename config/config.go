@@ -122,7 +122,7 @@ type IAppconfig interface {
 	WriteTimeout() time.Duration
 	BodyLimit() int
 	FileLimit() int
-	GcpBucket() string
+	GCPBucket() string
 }
 
 type app struct {
@@ -148,7 +148,7 @@ func (a *app) ReadTimeout() time.Duration  { return a.readTimeout }
 func (a *app) WriteTimeout() time.Duration { return a.writeTimeout }
 func (a *app) BodyLimit() int              { return a.bodyLimit }
 func (a *app) FileLimit() int              { return a.fileLimit }
-func (a *app) GcpBucket() string           { return a.gcpbucket }
+func (a *app) GCPBucket() string           { return a.gcpbucket }
 
 type IDbconfig interface {
 	Url() string // protocol://username:password@host:port/database?sslmode=disable
