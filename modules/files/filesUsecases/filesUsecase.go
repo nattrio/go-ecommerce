@@ -15,6 +15,7 @@ import (
 
 type IFilesUsecase interface {
 	UploadToGCP(req []*files.FileReq) ([]*files.FileRes, error)
+	DeleteFileOnGCP(req []*files.DeleteFileReq) error
 }
 
 type filesUsecase struct {
@@ -60,7 +61,7 @@ func (u *filesUsecase) uploadWorkers(ctx context.Context, client *storage.Client
 		buf := bytes.NewBuffer(b)
 
 		// Upload an object with storage.Writer.
-		wc := client.Bucket(u.cfg.App().GcpBucket()).Object(job.Destination).NewWriter(ctx)
+		wc := client.Bucket(u.cfg.App().GCPBucket()).Object(job.Destination).NewWriter(ctx)
 
 		if _, err = io.Copy(wc, buf); err != nil {
 			errs <- fmt.Errorf("io.Copy: %w", err)
@@ -76,9 +77,9 @@ func (u *filesUsecase) uploadWorkers(ctx context.Context, client *storage.Client
 		newFile := &filesPub{
 			file: &files.FileRes{
 				Filename: job.FileName,
-				Url:      fmt.Sprintf("https://storage.googleapis.com/%v/%v", u.cfg.App().GcpBucket(), job.Destination),
+				Url:      fmt.Sprintf("https://storage.googleapis.com/%v/%v", u.cfg.App().GCPBucket(), job.Destination),
 			},
-			bucket:      u.cfg.App().GcpBucket(),
+			bucket:      u.cfg.App().GCPBucket(),
 			destination: job.Destination,
 		}
 
@@ -129,4 +130,58 @@ func (u *filesUsecase) UploadToGCP(req []*files.FileReq) ([]*files.FileRes, erro
 	}
 
 	return res, nil
+}
+
+func (u *filesUsecase) deleteFileWorkers(ctx context.Context, client *storage.Client, jobs <-chan *files.DeleteFileReq, errs chan<- error) {
+	for job := range jobs {
+		o := client.Bucket(u.cfg.App().GCPBucket()).Object(job.Destination)
+
+		// Optional: set a generation-match precondition to avoid potential race
+		// conditions and data corruptions. The request to delete the file is aborted
+		// if the object's generation number does not match your precondition.
+		attrs, err := o.Attrs(ctx)
+		if err != nil {
+			errs <- fmt.Errorf("object.Attrs: %v", err)
+			return
+		}
+		o = o.If(storage.Conditions{GenerationMatch: attrs.Generation})
+
+		if err := o.Delete(ctx); err != nil {
+			errs <- fmt.Errorf("Object(%q).Delete: %v", job.Destination, err)
+			return
+		}
+		fmt.Printf("Blob %v deleted.\n", job.Destination)
+
+		errs <- nil
+	}
+}
+
+func (u *filesUsecase) DeleteFileOnGCP(req []*files.DeleteFileReq) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	defer cancel()
+
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		return fmt.Errorf("storage.NewClient: %v", err)
+	}
+	defer client.Close()
+
+	jobsCh := make(chan *files.DeleteFileReq, len(req))
+	errsCh := make(chan error, len(req))
+
+	for _, r := range req {
+		jobsCh <- r
+	}
+	close(jobsCh)
+
+	numWorkers := 5
+	for i := 0; i < numWorkers; i++ {
+		go u.deleteFileWorkers(ctx, client, jobsCh, errsCh)
+	}
+
+	for a := 0; a < len(req); a++ {
+		err := <-errsCh
+		return err
+	}
+	return nil
 }

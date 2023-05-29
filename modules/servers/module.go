@@ -91,4 +91,5 @@ func (m *moduleFactory) FileModule() {
 	router := m.r.Group("/files")
 
 	router.Post("/upload", m.mid.JwtAuth(), m.mid.Authorize(2), handler.UploadFiles)
+	router.Delete("/delete", m.mid.JwtAuth(), m.mid.Authorize(2), handler.DeleteFile)
 }
