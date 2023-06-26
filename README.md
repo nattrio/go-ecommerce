@@ -14,4 +14,3 @@
 [link](https://dbdiagram.io/d/645e0aa1dca9fb07c4f79384)
 
 ![ecom-db](https://github.com/nattrio/go-ecommerce/assets/45891267/7a58f8eb-f515-40ac-b746-7db6353a02db)
-ghfg
